@@ -154,22 +154,31 @@ return {
                 end
 
                 local run_commands = {
-                    python = "python3 " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py",
                     javascript = "node",
                     typescript = "deno run",
                     lua = "lua",
                     go = "go run",
-                    rust = "rustc %s -o /tmp/rustout && /tmp/rustout",
-                    c = "gcc %s -o /tmp/cout && /tmp/cout",
-                    cpp = "g++ %s -o /tmp/cppout && /tmp/cppout",
-                    bash = "bash",
-                    sh = "sh",
-                    java = "java",
                     php = "php",
                     ruby = "ruby",
                     dart = "dart run",
-                    html = "xdg-open",
+                    java = "java",
                 }
+
+                if vim.fn.has("win32") == 1 then
+                    -- Windows
+                    run_commands.python = "python " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
+                    run_commands.rust = "rustc %s -o main.exe && .\\main.exe"
+                    run_commands.c = "gcc %s -o main.exe && .\\main.exe"
+                    run_commands.cpp = "g++ %s -o main.exe && .\\main.exe"
+                    run_commands.html = "explorer"
+                else
+                    -- Linux / MacOS
+                    run_commands.python = "python3 " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
+                    run_commands.rust = "rustc %s -o /tmp/rustout && /tmp/rustout"
+                    run_commands.c = "gcc %s -o /tmp/cout && /tmp/cout"
+                    run_commands.cpp = "g++ %s -o /tmp/cppout && /tmp/cppout"
+                    run_commands.html = "xdg-open"
+                end
                 
                 local cmd = run_commands[ft]
                 if not cmd then

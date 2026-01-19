@@ -7,22 +7,30 @@ It combines the speed of Vim with the ease of VS Code.
 
 ## 📥 How to Install
 
+### Linux / Mac
 1.  **Download**:
     ```bash
-    git clone https://github.com/yourusername/easyvim.git
+    git clone https://github.com/benevolentshrine/easyvim.git
     cd easyvim
     ```
-
 2.  **Install**:
     ```bash
     ./install.sh
     ```
-    *(This automatically sets everything up for you)*
 
-3.  **Run**:
-    ```bash
-    nvim
+### Windows (PowerShell)
+1.  **Download**:
+    ```powershell
+    git clone https://github.com/benevolentshrine/easyvim.git
+    cd easyvim
     ```
+2.  **Install**:
+    ```powershell
+    .\install.ps1
+    ```
+
+### Start
+Run `nvim` to start the editor.
 
 ## 🎮 How to Use
 
