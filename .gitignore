@@ -1,0 +1,9 @@
+# MacOS
+.DS_Store
+
+# Linux
+*~
+*.swp
+
+# Neovim
+lazy-lock.json

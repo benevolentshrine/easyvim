@@ -1,0 +1,293 @@
+-- lua/plugins/ui.lua
+-- EasyVim UI Configuration
+
+return {
+    -- 1. Color Schemes (Dark + Light options)
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            vim.cmd.colorscheme("tokyonight-storm")
+        end,
+    },
+    { "ellisonleao/gruvbox.nvim", priority = 1000, lazy = true },
+
+    -- 2. File Explorer (Sidebar)
+    {
+        "nvim-neo-tree/neo-tree.nvim",
+        branch = "v3.x",
+        lazy = false,
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-tree/nvim-web-devicons",
+            "MunifTanjim/nui.nvim",
+        },
+        opts = {
+            close_if_last_window = true,
+            enable_git_status = true,
+            window = {
+                width = 30,
+                mappings = {
+                    ["a"] = "add", -- Prompts for name
+                    ["d"] = "delete",
+                    ["r"] = "rename",
+                    ["c"] = "copy",
+                    ["m"] = "move",
+                },
+            },
+            filesystem = {
+                follow_current_file = { enabled = true },
+                hijack_netrw_behavior = "open_default",
+            },
+            event_handlers = {
+                {
+                    event = "neo_tree_buffer_enter",
+                    handler = function()
+                        vim.opt_local.signcolumn = "auto"
+                    end,
+                },
+            },
+        },
+        config = function(_, opts)
+            require("neo-tree").setup(opts)
+            
+            -- Auto-show on startup (if directory)
+            vim.api.nvim_create_autocmd("VimEnter", {
+                callback = function()
+                    if vim.fn.argc() == 0 then
+                        vim.cmd("Neotree show")
+                    end
+                end,
+            })
+            
+            -- Hide Cursor completely in Sidebar
+            local function set_hidden_cursor()
+                -- 1. definition of Invisible color (Match background)
+                vim.api.nvim_set_hl(0, "HiddenCursor", { fg = "bg", bg = "bg", blend = 100 })
+                -- 2. Set to tiny horizontal line (hor1) using that invisible color
+                vim.opt_local.guicursor = "a:hor1-HiddenCursor"
+            end
+            
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "neo-tree",
+                callback = set_hidden_cursor,
+            })
+            
+            vim.api.nvim_create_autocmd("BufEnter", {
+                pattern = "*",
+                callback = function()
+                    if vim.bo.filetype == "neo-tree" then
+                        set_hidden_cursor()
+                        -- Disable Visual Mode in Sidebar (User Request: "remove v-block fuss")
+                        vim.keymap.set("n", "v", "<Nop>", { buffer = true })
+                        vim.keymap.set("n", "V", "<Nop>", { buffer = true })
+                        vim.keymap.set("n", "<C-v>", "<Nop>", { buffer = true })
+                    else
+                        -- Restore to Line Cursor everywhere
+                        vim.cmd("set guicursor=a:ver25")
+                    end
+                end,
+            })
+        end
+    },
+
+    -- 3. Tabs
+    {
+        "akinsho/bufferline.nvim",
+        version = "*",
+        dependencies = "nvim-tree/nvim-web-devicons",
+        event = "VeryLazy",
+        opts = {
+            options = {
+                mode = "buffers",
+                separator_style = "slant",
+                always_show_bufferline = true,
+                show_buffer_close_icons = true,
+                offsets = {
+                    { filetype = "neo-tree", text = "Files", separator = true },
+                },
+            },
+        },
+    },
+
+    -- 4. Find Files (Telescope)
+    {
+        "nvim-telescope/telescope.nvim",
+        tag = "0.1.6",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        cmd = "Telescope",
+        keys = {
+            { "<C-f>", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+            { "<C-h>", "<cmd>Telescope live_grep<cr>", desc = "Search in Files" },
+        },
+        opts = {
+            defaults = {
+                layout_strategy = "horizontal",
+                layout_config = { prompt_position = "top" },
+                sorting_strategy = "ascending",
+            },
+        },
+    },
+
+    -- 5. Mason (LSP Installer)
+    {
+        "williamboman/mason.nvim",
+        cmd = "Mason",
+        build = ":MasonUpdate",
+        opts = {},
+    },
+
+    -- 6. Status Bar (Top)
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            -- Helper: Safe Run (only if buffer is a real file)
+            local function safe_run()
+                local ft = vim.bo.filetype
+                local file = vim.fn.expand("%:p")
+                
+                if file == "" or vim.bo.buftype ~= "" then
+                    vim.notify("Open a file first!", vim.log.levels.WARN)
+                    return
+                end
+
+                local run_commands = {
+                    python = "python3 " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py",
+                    javascript = "node",
+                    typescript = "deno run",
+                    lua = "lua",
+                    go = "go run",
+                    rust = "rustc %s -o /tmp/rustout && /tmp/rustout",
+                    c = "gcc %s -o /tmp/cout && /tmp/cout",
+                    cpp = "g++ %s -o /tmp/cppout && /tmp/cppout",
+                    bash = "bash",
+                    sh = "sh",
+                    java = "java",
+                    php = "php",
+                    ruby = "ruby",
+                    dart = "dart run",
+                    html = "xdg-open",
+                }
+                
+                local cmd = run_commands[ft]
+                if not cmd then
+                    vim.notify("No runner for: " .. ft, vim.log.levels.WARN)
+                    return
+                end
+
+                vim.cmd("write")
+                
+                local full_cmd
+                if cmd:find("%%s") then
+                    full_cmd = string.format(cmd, file)
+                else
+                    full_cmd = cmd .. " " .. file
+                end
+                
+                -- Run in Native Terminal
+                EasyTerminal.run(full_cmd)
+            end
+
+            -- Actions
+            local function act_new()
+                require("core.input").ask("New File Name", "", function(name)
+                    vim.cmd("enew")
+                    vim.cmd("file " .. name)
+                end)
+            end
+            local function act_save() 
+                local current_file = vim.fn.expand("%")
+                if current_file == "" then
+                    act_saveas() -- If no name, treat as "Save As"
+                elseif vim.bo.buftype == "" then 
+                    vim.cmd("write") 
+                end 
+            end
+            local function act_saveas()
+                require("core.input").ask("Save As", "", function(name)
+                    vim.cmd("saveas " .. name)
+                end)
+            end
+            local function act_close() vim.cmd("bdelete") end
+            local function act_theme() 
+                vim.ui.select({"Default", "Black", "Gruvbox"}, { prompt = "Theme" }, function(choice)
+                    if choice == "Default" then vim.cmd("colorscheme tokyonight-storm")
+                    elseif choice == "Black" then vim.cmd("colorscheme tokyonight-night")
+                    elseif choice == "Gruvbox" then 
+                        vim.o.background = "dark"
+                        vim.cmd("colorscheme gruvbox") 
+                    end
+                end)
+            end
+
+            require("lualine").setup({
+                options = {
+                    theme = "auto",
+                    section_separators = '',
+                    component_separators = '',
+                },
+                sections = {},
+                inactive_sections = {},
+                tabline = {
+                    lualine_a = { 'mode' },
+                    lualine_b = { 'branch', 'diff' },
+                    lualine_c = {
+                        'filename',
+                        { function() return "New" end, on_click = act_new, color = { fg = "#7aa2f7" } },
+                        { function() return "Open" end, on_click = function() vim.cmd("Neotree toggle") end, color = { fg = "#e0af68" } },
+                        { function() return "Save" end, on_click = act_save, color = { fg = "#9ece6a" } },
+                        { function() return "Save As" end, on_click = act_saveas, color = { fg = "#73daca" } },
+                    },
+                    lualine_x = {
+                        { function() return "Shots" end, on_click = function() require("core.shortcuts").show() end, color = { fg = "#ff9e64" } },
+                        { function() return "Theme" end, on_click = act_theme, color = { fg = "#bb9af7" } },
+                        { function() return "Terminal" end, on_click = function() EasyTerminal.toggle() end },
+                        { function() return "Run" end, on_click = safe_run, color = { fg = "#98be65" } },
+                        { function() return "Exit" end, on_click = function() vim.cmd("qa") end, color = { fg = "#f7768e" } },
+                    },
+                    lualine_y = { 'progress' },
+                    lualine_z = { 'location' }
+                },
+            })
+        end,
+    },
+
+    -- 7. Dashboard
+    {
+        "goolord/alpha-nvim",
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            local dashboard = require("alpha.themes.dashboard")
+            dashboard.section.header.val = {
+                [[███████╗ █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗]],
+                [[██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██║   ██║██║████╗ ████║]],
+                [[█████╗  ███████║███████╗ ╚████╔╝ ██║   ██║██║██╔████╔██║]],
+                [[██╔══╝  ██╔══██║╚════██║  ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║]],
+                [[███████╗██║  ██║███████║   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║]],
+                [[╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝]],
+                "",
+                "           Simplicity, Speed, Power           ",
+            }
+            dashboard.section.buttons.val = {
+                dashboard.button("f", "  Find File  (Ctrl+F)", ":Telescope find_files<CR>"),
+                dashboard.button("n", "  New File", ":enew<CR>"),
+                dashboard.button("s", "  Sidebar    (Ctrl+B)", ":Neotree toggle<CR>"),
+                dashboard.button("q", "  Quit", ":qa<CR>"),
+            }
+            -- Footer removed as requested
+            dashboard.section.footer.val = {} 
+            require("alpha").setup(dashboard.config)
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "AlphaReady",
+                callback = function()
+                    -- Do not auto-show sidebar on dashboard to keep it clean
+                    -- vim.cmd("Neotree show") 
+                end,
+            })
+        end,
+    },
+
+
+}
