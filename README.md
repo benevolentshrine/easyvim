@@ -19,15 +19,14 @@ It combines the speed of Vim with the ease of VS Code.
     ```
 
 ### Windows (PowerShell)
-1.  **Download**:
-    ```powershell
-    git clone https://github.com/benevolentshrine/easyvim.git
-    cd easyvim
-    ```
-2.  **Install**:
-    ```powershell
-    .\install.ps1
-    ```
+Open PowerShell and run these commands one by one:
+
+```powershell
+cd Desktop
+git clone https://github.com/benevolentshrine/easyvim.git
+cd easyvim
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
 
 ### Start
 Run `nvim` to start the editor.
