@@ -40,12 +40,19 @@ if (-not (Test-Path $ConfigDir)) {
     New-Item -ItemType Directory -Path $ConfigDir | Out-Null
 }
 
-$SourceDir = Get-Location
-# Use Robocopy for reliable recursive copying (Copy-Item is flaky)
-# /E = subdir including empty, /XD = exclude directories, /XF = exclude files
-# Robocopy has special exit codes (0-7 are success), so we ignore the "error" status
-$RoboArgs = @($SourceDir, $ConfigDir, "/E", "/XD", ".git", ".github", "/XF", "install.ps1", "install.sh")
-& robocopy @RoboArgs | Out-Null
+$SourceDir = $PSScriptRoot
+Write-Host "Copying from: $SourceDir" -ForegroundColor Gray
+
+# Robocopy with visible output for debugging
+$RoboArgs = @($SourceDir, $ConfigDir, "/E", "/XD", ".git", ".github", "/XF", "install.ps1", "install.sh", "README.md")
+& robocopy @RoboArgs
+
+# Verify installation
+if (-not (Test-Path "$ConfigDir\lua\core\options.lua")) {
+    Write-Host "ERROR: Critical config files are missing!" -ForegroundColor Red
+    Write-Host "Copy failed. Please copy the 'lua' folder manually to $ConfigDir"
+    exit 1
+}
 
 # 5. Create Desktop Shortcut
 $WshShell = New-Object -ComObject WScript.Shell
