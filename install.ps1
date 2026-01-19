@@ -35,7 +35,11 @@ if (Test-Path $ConfigDir) {
 }
 
 # 4. Install EasyVim Config
-Write-Host "Installing configuration..." -ForegroundColor Green
+Write-Host "Installing configuration to $ConfigDir..." -ForegroundColor Green
+if (-not (Test-Path $ConfigDir)) {
+    New-Item -ItemType Directory -Path $ConfigDir | Out-Null
+}
+
 $SourceDir = Get-Location
 Copy-Item -Path "$SourceDir\*" -Destination $ConfigDir -Recurse -Force -Exclude ".git", "install.ps1", "install.sh"
 
