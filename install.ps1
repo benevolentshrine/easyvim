@@ -41,7 +41,11 @@ if (-not (Test-Path $ConfigDir)) {
 }
 
 $SourceDir = Get-Location
-Copy-Item -Path "$SourceDir\*" -Destination $ConfigDir -Recurse -Force -Exclude ".git", "install.ps1", "install.sh"
+# Use Robocopy for reliable recursive copying (Copy-Item is flaky)
+# /E = subdir including empty, /XD = exclude directories, /XF = exclude files
+# Robocopy has special exit codes (0-7 are success), so we ignore the "error" status
+$RoboArgs = @($SourceDir, $ConfigDir, "/E", "/XD", ".git", ".github", "/XF", "install.ps1", "install.sh")
+& robocopy @RoboArgs | Out-Null
 
 # 5. Create Desktop Shortcut
 $WshShell = New-Object -ComObject WScript.Shell
