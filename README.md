@@ -3,22 +3,23 @@
 
 > **"Performance should not cost you your intuition."**
 
-EasyVim is a specialized Neovim environment designed to solve the **Hardware Resource Crisis** (Electron Bloat) and the **Learning Curve** of terminal editors. It runs on **35MB of RAM** but behaves like VS Code out of the box.
+EasyVim is a specialized Neovim environment designed to solve the **Hardware Resource Crisis** and the **Learning Curve** of terminal editors.
 
-| Feature | VS Code / Electron | EasyVim |
-| :--- | :--- | :--- |
-| **Idle RAM** | ~800MB+ | **~35MB** |
-| **Startup Time** | ~2-5s | **~50ms** |
-| **Ctrl+S / Ctrl+C** | ✅ Native | **✅ Native** (No setup) |
-| **Learning Curve** | Flat | **Guided ("Silent Teacher")** |
-| **Philosophy** | "Hide the Engine" | **"Teach the Engine"** |
+### ⚡ Performance Specs
+
+| Metric | EasyVim (Measured) |
+| :--- | :--- |
+| **Idle RAM** | **~25 MB** |
+| **Startup Time** | **< 50ms** |
+| **Input Latency** | **Instant** |
+| **Philosophy** | **"Teach the Engine"** |
 
 ---
 
 ## 🧠 The Philosophy
 
 ### 1. The Hardware Crisis
-Modern editors have become operating systems. Running a simple text editor shouldn't require 1GB of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on a Raspberry Pi, a Chromebook, or a vintage ThinkPad without stutter.
+Modern editors often consume gigabytes of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on any hardware—from a Raspberry Pi to a high-end workstation—without stutter.
 
 ### 2. The "Silent Teacher"
 Vim is infamous for "trapping" users. EasyVim removes this fear.
