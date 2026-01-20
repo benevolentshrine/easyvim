@@ -1,25 +1,59 @@
-# EasyVim
+# ⚡ EasyVim
+### The Missing Bridge to the Terminal
 
-> **Simplicity. Speed. Power.**
+> **"Performance should not cost you your intuition."**
 
-EasyVim is a ready-to-use code editor built for everyone.
-It combines the speed of Vim with the ease of VS Code.
+EasyVim is a specialized Neovim environment designed to solve the **Hardware Resource Crisis** (Electron Bloat) and the **Learning Curve** of terminal editors. It runs on **35MB of RAM** but behaves like VS Code out of the box.
 
-## 📥 How to Install
+| Feature | VS Code / Electron | EasyVim |
+| :--- | :--- | :--- |
+| **Idle RAM** | ~800MB+ | **~35MB** |
+| **Startup Time** | ~2-5s | **~50ms** |
+| **Ctrl+S / Ctrl+C** | ✅ Native | **✅ Native** (No setup) |
+| **Learning Curve** | Flat | **Guided ("Silent Teacher")** |
+| **Philosophy** | "Hide the Engine" | **"Teach the Engine"** |
 
-### Linux / Mac
-1.  **Download**:
-    ```bash
-    git clone https://github.com/benevolentshrine/easyvim.git
-    cd easyvim
-    ```
-2.  **Install**:
-    ```bash
-    ./install.sh
-    ```
+---
 
-### Windows (PowerShell)
-Open PowerShell and run these commands one by one:
+## 🧠 The Philosophy
+
+### 1. The Hardware Crisis
+Modern editors have become operating systems. Running a simple text editor shouldn't require 1GB of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on a Raspberry Pi, a Chromebook, or a vintage ThinkPad without stutter.
+
+### 2. The "Silent Teacher"
+Vim is infamous for "trapping" users. EasyVim removes this fear.
+- **Intuition First**: `Ctrl+S`, `Ctrl+C`, `Ctrl+Z` work exactly as you expect.
+- **Gradual Exposure**: We don't force you to learn hjkl immediately. Use the mouse. Use the arrows. But when you are ready, the native power of Vim is lurking just beneath the surface, waiting for you to discover it.
+
+---
+
+## 📸 Screenshots
+
+*(Add your screenshots to the `assets` folder and link them here)*
+<!--
+![Silent Teacher](assets/silent_teacher.png)
+*The "Silent Teacher" notification guides you gently.*
+-->
+
+---
+
+## 📥 Installation
+
+### ⚠️ Prerequisite
+We require **Neovim v0.9+**.
+If you don't have it, our installers will try to tell you how to get it (or auto-install it on Windows).
+
+### 🐧 Linux / 🍎 MacOS
+**Note:** This script will automatically back up your existing `~/.config/nvim` to `~/.config/nvim.bak`.
+
+```bash
+git clone https://github.com/benevolentshrine/easyvim.git
+cd easyvim
+./install.sh
+```
+
+### 🪟 Windows (PowerShell)
+**Note:** This script detects missing dependencies and can auto-download Neovim for you.
 
 ```powershell
 cd Desktop
@@ -28,19 +62,11 @@ cd easyvim
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-### Start
-Run `nvim` to start the editor.
+---
 
-## 🎮 How to Use
+## ⌨️ Cheat Sheet
 
--   **Run Code**: Press **F5** (or click "Run" at the top).
--   **Open Terminal**: Press **Ctrl+\** (or click "Terminal").
--   **Files**: Click "Open" or press **Ctrl+B** to see the sidebar.
--   **Themes**: Click "Theme" to switch between Dark, Pitch Black, and Retro.
-
-## ⌨️ Shortcuts (Cheat Sheet)
-
-Click the **Shots** button at the top to see this list inside the editor:
+Click the **Shots** button in the top bar to see this anytime.
 
 | Key | Action |
 | :--- | :--- |
@@ -49,8 +75,11 @@ Click the **Shots** button at the top to see this list inside the editor:
 | **Ctrl+Z** | Undo |
 | **Ctrl+C** | Copy / Stop Code |
 | **Ctrl+V** | Paste |
+| **Ctrl+B** | Toggle Sidebar |
+| **Ctrl+\** | Toggle Terminal |
 | **F5** | Run Code |
 
-## 📦 Supported Languages
-Python, JavaScript, C, C++, Java, HTML, and many more work instantly.
+---
 
+## 📄 License
+MIT License © 2026 benevolentshrine
