@@ -6,16 +6,16 @@ EasyVim bridges the gap between the intuition of VS Code and the raw performance
 
 ---
 
-## ✨ Highlights
+## Highlights
 
-*   **🚀 Zero Learning Curve**: `Ctrl+S`, `Ctrl+C`, `Ctrl+V`, `Ctrl+Z` work instantly. No need to relearn muscle memory.
-*   **⚡ Blazing Fast**: Startup time **<50ms**. Input latency is instant.
-*   **🔋 Efficient**: Runs perfectly on old laptops, Raspberry Pis, or cloud shells (~25MB RAM).
-*   **📦 Battery Included**: Comes with a File Explorer (Neo-tree), Terminal Toggles, and Auto-Language Support.
+*   **Zero Learning Curve**: `Ctrl+S`, `Ctrl+C`, `Ctrl+V`, `Ctrl+Z` work instantly. No need to relearn muscle memory.
+*   **Blazing Fast**: Startup time **<50ms**. Input latency is instant.
+*   **Efficient**: Runs perfectly on old laptops, Raspberry Pis, or cloud shells (~25MB RAM).
+*   **Battery Included**: Comes with a File Explorer (Neo-tree), Terminal Toggles, and Auto-Language Support.
 
 ---
 
-## ⚡ Performance Specs
+## Performance Specs
 
 | Metric | EasyVim (Measured) |
 | :--- | :--- |
@@ -25,7 +25,7 @@ EasyVim bridges the gap between the intuition of VS Code and the raw performance
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 **Install in 3 steps:**
 
@@ -48,7 +48,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 ---
 
-## 🎮 Usage & Shortcuts
+## Usage & Shortcuts
 
 We map the keys you already know to Neovim's powerful backend.
 
@@ -68,9 +68,9 @@ We map the keys you already know to Neovim's powerful backend.
 
 ---
 
-## 🧠 The Manual
+## The Manual
 
-### **Files & Sidebar**
+### Files & Sidebar
 Press **Ctrl+B** to open the file explorer (Neo-tree).
 - **a**: Add a file/folder
 - **d**: Delete
@@ -78,7 +78,7 @@ Press **Ctrl+B** to open the file explorer (Neo-tree).
 - **c**: Copy
 - **m**: Move
 
-### **Running Code**
+### Running Code
 EasyVim detects your language automatically.
 - Open a Python/JS/C++ file.
 - Press **F5**.
@@ -86,7 +86,7 @@ EasyVim detects your language automatically.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <!-- Upload screenshots to 'assets/' folder and uncomment these lines -->
 <!-- 
@@ -96,7 +96,7 @@ EasyVim detects your language automatically.
 
 ---
 
-## 🧠 Philosophy
+## Philosophy
 
 ### 1. The Hardware Crisis
 Modern editors often consume gigabytes of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on any hardware without stutter.
@@ -106,6 +106,6 @@ Vim is infamous for "trapping" users. EasyVim removes this fear. We don't force 
 
 ---
 
-## 📄 License
+## License
 
 MIT License © 2026 benevolentshrine
