@@ -1,61 +1,42 @@
-# ⚡ EasyVim
-### The Missing Bridge to the Terminal
+# EasyVim
 
-> **"Performance should not cost you your intuition."**
+> **A lightweight, modern IDE experience built on Neovim where common shortcuts just work.**
 
-EasyVim is a specialized Neovim environment designed to solve the **Hardware Resource Crisis** and the **Learning Curve** of terminal editors.
+EasyVim bridges the gap between the intuition of VS Code and the raw performance of the terminal. It runs on **<35MB of RAM** but behaves like a modern editor out of the box.
 
-### ⚡ Performance Specs
+---
+
+## ✨ Highlights
+
+*   **🚀 Zero Learning Curve**: `Ctrl+S`, `Ctrl+C`, `Ctrl+V`, `Ctrl+Z` work instantly. No need to relearn muscle memory.
+*   **⚡ Blazing Fast**: Startup time **<50ms**. Input latency is instant.
+*   **🔋 Efficient**: Runs perfectly on old laptops, Raspberry Pis, or cloud shells (~25MB RAM).
+*   **📦 Battery Included**: Comes with a File Explorer (Neo-tree), Terminal Toggles, and Auto-Language Support.
+
+---
+
+## ⚡ Performance Specs
 
 | Metric | EasyVim (Measured) |
 | :--- | :--- |
 | **Idle RAM** | **~25 MB** |
 | **Startup Time** | **< 50ms** |
-| **Input Latency** | **Instant** |
 | **Philosophy** | **"Teach the Engine"** |
 
 ---
 
-## 🧠 The Philosophy
+## 🚀 Quick Start
 
-### 1. The Hardware Crisis
-Modern editors often consume gigabytes of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on any hardware—from a Raspberry Pi to a high-end workstation—without stutter.
+**Install in 3 steps:**
 
-### 2. The "Silent Teacher"
-Vim is infamous for "trapping" users. EasyVim removes this fear.
-- **Intuition First**: `Ctrl+S`, `Ctrl+C`, `Ctrl+Z` work exactly as you expect.
-- **Gradual Exposure**: We don't force you to learn hjkl immediately. Use the mouse. Use the arrows. But when you are ready, the native power of Vim is lurking just beneath the surface, waiting for you to discover it.
-
----
-
-## 📸 Screenshots
-
-*(Add your screenshots to the `assets` folder and link them here)*
-<!--
-![Silent Teacher](assets/silent_teacher.png)
-*The "Silent Teacher" notification guides you gently.*
--->
-
----
-
-## 📥 Installation
-
-### ⚠️ Prerequisite
-We require **Neovim v0.9+**.
-If you don't have it, our installers will try to tell you how to get it (or auto-install it on Windows).
-
-### 🐧 Linux / 🍎 MacOS
-**Note:** This script will automatically back up your existing `~/.config/nvim` to `~/.config/nvim.bak`.
-
+### Linux / MacOS
 ```bash
 git clone https://github.com/benevolentshrine/easyvim.git
 cd easyvim
 ./install.sh
 ```
 
-### 🪟 Windows (PowerShell)
-**Note:** This script detects missing dependencies and can auto-download Neovim for you.
-
+### Windows (PowerShell)
 ```powershell
 cd Desktop
 git clone https://github.com/benevolentshrine/easyvim.git
@@ -63,24 +44,68 @@ cd easyvim
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
+*(Restart your terminal or run `nvim` to start)*
+
 ---
 
-## ⌨️ Cheat Sheet
+## 🎮 Usage & Shortcuts
 
-Click the **Shots** button in the top bar to see this anytime.
+We map the keys you already know to Neovim's powerful backend.
 
 | Key | Action |
 | :--- | :--- |
 | **Ctrl+S** | Save File |
-| **Ctrl+F** | Find File |
-| **Ctrl+Z** | Undo |
 | **Ctrl+C** | Copy / Stop Code |
 | **Ctrl+V** | Paste |
+| **Ctrl+Z** | Undo |
+| **Ctrl+F** | Find File |
+| **Ctrl+H** | Search Text |
 | **Ctrl+B** | Toggle Sidebar |
 | **Ctrl+\** | Toggle Terminal |
-| **F5** | Run Code |
+| **F5** | Run Code (Python, JS, C++, etc.) |
+
+*Click the **Shots** button in the top bar to see this list inside the editor.*
+
+---
+
+## 🧠 The Manual
+
+### **Files & Sidebar**
+Press **Ctrl+B** to open the file explorer (Neo-tree).
+- **a**: Add a file/folder
+- **d**: Delete
+- **r**: Rename
+- **c**: Copy
+- **m**: Move
+
+### **Running Code**
+EasyVim detects your language automatically.
+- Open a Python/JS/C++ file.
+- Press **F5**.
+- It runs inside the native terminal.
+
+---
+
+## 📸 Screenshots
+
+<!-- Upload screenshots to 'assets/' folder and uncomment these lines -->
+<!-- 
+![Dashboard](assets/dashboard.png)
+![Sidebar](assets/sidebar.png)
+-->
+
+---
+
+## 🧠 Philosophy
+
+### 1. The Hardware Crisis
+Modern editors often consume gigabytes of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on any hardware without stutter.
+
+### 2. The "Silent Teacher"
+Vim is infamous for "trapping" users. EasyVim removes this fear. We don't force you to learn modal editing immediately. Use the mouse, use the arrows. But when you are ready, the native power of Vim is lurking just beneath the surface.
 
 ---
 
 ## 📄 License
+
 MIT License © 2026 benevolentshrine
