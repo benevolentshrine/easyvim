@@ -239,8 +239,8 @@ return {
                         handle:close()
                     end
                 elseif vim.fn.executable("zenity") == 1 then
-                    -- Linux (Zenity)
-                    local handle = io.popen("zenity --file-selection --directory")
+                    -- Linux (Zenity) - Silence GTK/Adwaita warnings
+                    local handle = io.popen("zenity --file-selection --directory 2>/dev/null")
                     if handle then
                         new_dir = handle:read("*a"):gsub("[\r\n]", "")
                         handle:close()
