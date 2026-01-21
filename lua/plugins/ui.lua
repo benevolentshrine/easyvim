@@ -8,14 +8,32 @@ return {
         lazy = false,
         priority = 1000,
         config = function()
-            vim.cmd.colorscheme("tokyonight-storm")
+            local data_path = vim.fn.stdpath("data") .. "/theme.txt"
+            if vim.fn.filereadable(data_path) == 1 then
+                local saved_theme = vim.fn.readfile(data_path)[1]
+                if saved_theme == "Tokyo Night" then vim.cmd("colorscheme tokyonight-storm")
+                elseif saved_theme == "Midnight (Black)" then vim.cmd("colorscheme tokyonight-night")
+                elseif saved_theme == "Catppuccin (Mocha)" then vim.cmd("colorscheme catppuccin-mocha")
+                elseif saved_theme == "Kanagawa (Zen)" then vim.cmd("colorscheme kanagawa")
+                elseif saved_theme == "Gruvbox" then 
+                     vim.o.background = "dark"
+                     vim.cmd("colorscheme gruvbox")
+                else
+                     vim.cmd("colorscheme tokyonight-storm") 
+                end
+            else
+                vim.cmd.colorscheme("tokyonight-storm")
+            end
         end,
     },
-    { "ellisonleao/gruvbox.nvim", priority = 1000, lazy = true },
+    { "ellisonleao/gruvbox.nvim", lazy = true },
+    { "catppuccin/nvim", name = "catppuccin", lazy = true },
+    { "rebelot/kanagawa.nvim", lazy = true },
 
     -- 2. File Explorer (Sidebar)
     {
         "nvim-neo-tree/neo-tree.nvim",
+
         branch = "v3.x",
         lazy = false,
         dependencies = {
@@ -268,14 +286,30 @@ return {
             vim.keymap.set("n", "<C-o>", act_open_folder, { desc = "Open Folder" })
 
             local function act_theme() 
-                vim.ui.select({"Default", "Black", "Gruvbox"}, { prompt = "Theme" }, function(choice)
-                    if choice == "Default" then vim.cmd("colorscheme tokyonight-storm")
-                    elseif choice == "Black" then vim.cmd("colorscheme tokyonight-night")
-                    elseif choice == "Gruvbox" then 
-                        vim.o.background = "dark"
-                        vim.cmd("colorscheme gruvbox") 
+                vim.ui.select(
+                    { "Tokyo Night", "Midnight (Black)", "Catppuccin (Mocha)", "Kanagawa (Zen)", "Gruvbox" },
+                    { prompt = "Select Theme" },
+                    function(choice)
+                        if not choice then return end
+                        
+                        if choice == "Tokyo Night" then 
+                            vim.cmd("colorscheme tokyonight-storm")
+                        elseif choice == "Midnight (Black)" then 
+                            vim.cmd("colorscheme tokyonight-night")
+                        elseif choice == "Catppuccin (Mocha)" then 
+                            vim.cmd("colorscheme catppuccin-mocha")
+                        elseif choice == "Kanagawa (Zen)" then 
+                            vim.cmd("colorscheme kanagawa")
+                        elseif choice == "Gruvbox" then 
+                            vim.o.background = "dark"
+                            vim.cmd("colorscheme gruvbox") 
+                        end
+                        
+                        -- Save choice for persistent load
+                        local data_path = vim.fn.stdpath("data")
+                        vim.fn.writefile({choice}, data_path .. "/theme.txt")
                     end
-                end)
+                )
             end
 
             require("lualine").setup({
