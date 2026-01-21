@@ -220,9 +220,43 @@ return {
                 end)
             end
             local function act_open_folder()
-                -- Native Directory Picker with Completion
-                local current = vim.fn.getcwd()
-                local new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
+                local new_dir = ""
+                
+                -- OS-Specific GUI Pickers
+                if vim.fn.has("win32") == 1 then
+                    -- Windows (PowerShell)
+                    local cmd = "powershell -NoProfile -Command \"Add-Type -AssemblyName System.Windows.Forms; $d = New-Object System.Windows.Forms.FolderBrowserDialog; $d.ShowNewFolderButton = $true; if ($d.ShowDialog() -eq 'OK') { Write-Host $d.SelectedPath }\""
+                    local handle = io.popen(cmd)
+                    if handle then
+                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
+                        handle:close()
+                    end
+                elseif vim.fn.has("mac") == 1 then
+                    -- MacOS (AppleScript)
+                    local handle = io.popen("osascript -e 'POSIX path of (choose folder)'")
+                    if handle then
+                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
+                        handle:close()
+                    end
+                elseif vim.fn.executable("zenity") == 1 then
+                    -- Linux (Zenity)
+                    local handle = io.popen("zenity --file-selection --directory")
+                    if handle then
+                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
+                        handle:close()
+                    end
+                end
+
+                -- Fallback to Text Input if GUI failed or cancelled
+                if new_dir == "" then
+                    -- If user cancelled GUI, do nothing. If GUI failed, ask via text.
+                    -- Simple heuristic: if GUI tools missing, fallback.
+                    if vim.fn.has("win32") == 0 and vim.fn.has("mac") == 0 and vim.fn.executable("zenity") == 0 then
+                         local current = vim.fn.getcwd()
+                         new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
+                    end
+                end
+
                 if new_dir ~= "" then
                     vim.cmd("cd " .. new_dir)
                     vim.cmd("Neotree show")
