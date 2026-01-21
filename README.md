@@ -55,6 +55,7 @@ We map the keys you already know to Neovim's powerful backend.
 | Key | Action |
 | :--- | :--- |
 | **Ctrl+S** | Save File |
+| **Ctrl+O** | **Open Folder** |
 | **Ctrl+C** | Copy / Stop Code |
 | **Ctrl+V** | Paste |
 | **Ctrl+Z** | Undo |

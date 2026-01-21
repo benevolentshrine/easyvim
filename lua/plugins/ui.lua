@@ -219,7 +219,20 @@ return {
                     vim.cmd("saveas " .. name)
                 end)
             end
-            local function act_close() vim.cmd("bdelete") end
+            local function act_open_folder()
+                -- Native Directory Picker with Completion
+                local current = vim.fn.getcwd()
+                local new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
+                if new_dir ~= "" then
+                    vim.cmd("cd " .. new_dir)
+                    vim.cmd("Neotree show")
+                    vim.notify("Workspace: " .. new_dir)
+                end
+            end
+
+            -- Global Keymap for Open Folder (Ctrl+O)
+            vim.keymap.set("n", "<C-o>", act_open_folder, { desc = "Open Folder" })
+
             local function act_theme() 
                 vim.ui.select({"Default", "Black", "Gruvbox"}, { prompt = "Theme" }, function(choice)
                     if choice == "Default" then vim.cmd("colorscheme tokyonight-storm")
@@ -245,10 +258,10 @@ return {
                     lualine_c = {
                         'filename',
                         { function() return "New" end, on_click = act_new, color = { fg = "#7aa2f7" } },
-                        { function() return "Open" end, on_click = function() vim.cmd("Neotree toggle") end, color = { fg = "#e0af68" } },
+                        { function() return "Open" end, on_click = act_open_folder, color = { fg = "#ff9e64" } }, -- NEW
+                        { function() return "Files" end, on_click = function() vim.cmd("Neotree toggle") end, color = { fg = "#e0af68" } },
                         { function() return "Save" end, on_click = act_save, color = { fg = "#9ece6a" } },
-                        { function() return "Save As" end, on_click = act_saveas, color = { fg = "#73daca" } },
-                    },
+                   },
                     lualine_x = {
                         { function() return "Shots" end, on_click = function() require("core.shortcuts").show() end, color = { fg = "#ff9e64" } },
                         { function() return "Theme" end, on_click = act_theme, color = { fg = "#bb9af7" } },
@@ -280,9 +293,9 @@ return {
                 "           Simplicity, Speed, Power           ",
             }
             dashboard.section.buttons.val = {
-                dashboard.button("f", "  Find File  (Ctrl+F)", ":Telescope find_files<CR>"),
                 dashboard.button("n", "  New File", ":enew<CR>"),
-                dashboard.button("s", "  Sidebar    (Ctrl+B)", ":Neotree toggle<CR>"),
+                dashboard.button("o", "  Open Folder (Ctrl+O)", "<cmd>lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-o>', true, false, true), 'm', true)<CR>"),
+                dashboard.button("f", "  Find File   (Ctrl+F)", ":Telescope find_files<CR>"),
                 dashboard.button("q", "  Quit", ":qa<CR>"),
             }
             -- Footer removed as requested

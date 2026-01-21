@@ -61,6 +61,7 @@ function M.show()
     local lines = {
         "",
         "  Ctrl+S   Save File",
+        "  Ctrl+O   Open Folder",
         "  Ctrl+Z   Undo",
         "  Ctrl+C   Copy / Stop Code",
         "  Ctrl+V   Paste",
