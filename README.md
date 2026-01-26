@@ -36,13 +36,7 @@ cd easyvim
 ./install.sh
 ```
 
-### Windows (PowerShell)
-```powershell
-cd Desktop
-git clone https://github.com/benevolentshrine/easyvim.git
-cd easyvim
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-```
+
 
 *(Restart your terminal or run `nvim` to start)*
 
