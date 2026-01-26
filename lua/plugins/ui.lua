@@ -101,6 +101,12 @@ return {
                         vim.keymap.set("n", "v", "<Nop>", { buffer = true })
                         vim.keymap.set("n", "V", "<Nop>", { buffer = true })
                         vim.keymap.set("n", "<C-v>", "<Nop>", { buffer = true })
+                        -- Safety: If they somehow get into visual mode (mouse), exit immediately on keys
+                        vim.keymap.set("v", "v", "<Esc>", { buffer = true })
+                        vim.keymap.set("v", "V", "<Esc>", { buffer = true })
+                        vim.keymap.set("v", "<C-v>", "<Esc>", { buffer = true })
+                        -- Mouse drag fix
+                        vim.keymap.set("v", "<LeftRelease>", "<Esc>", { buffer = true })
                     else
                         -- Restore to Line Cursor everywhere
                         vim.cmd("set guicursor=a:ver25")
