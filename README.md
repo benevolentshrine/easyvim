@@ -78,6 +78,12 @@ EasyVim detects your language automatically.
 - Open a Python/JS/C++ file.
 - Press **F5**.
 - It runs inside the native terminal.
+- Press **Ctrl+\** to toggle the terminal manually.
+
+### Aesthetics & Customization
+EasyVim prioritizes visual comfort.
+- **Theme Switcher**: Click "Theme" in the top bar to swap between **Tokyo Night**, **Catppuccin**, **Kanagawa**, and more. It remembers your choice!
+- **native-gui**: Press **Ctrl+O** to use your OS's native folder picker (Windows/Mac/Linux) instead of the command line.
 
 ---
 
