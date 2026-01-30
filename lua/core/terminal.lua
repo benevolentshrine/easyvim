@@ -114,3 +114,8 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 _G.EasyTerminal = M -- New Global Name
 return M
+
+-- TODO: Maybe add terminal resizing capability later?
+-- FIXME: Sometimes cursor gets stuck in terminal on fast switching
+-- Note: The 50ms defer was added after testing revealed race conditions
+--       Might need adjustment on slower systems

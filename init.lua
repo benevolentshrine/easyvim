@@ -1,7 +1,7 @@
 -- EasyVim: init.lua
 -- The entry point that bootstraps everything.
 
--- 1. Set <space> as the leader key
+-- Leader key setup
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -10,7 +10,7 @@ vim.g.maplocalleader = " "
 local config_path = vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand('<sfile>')), ':h')
 vim.opt.rtp:prepend(config_path)
 
--- 2. Bootstrap lazy.nvim (Plugin Manager)
+-- Lazy.nvim bootstrap
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
@@ -24,12 +24,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- 3. Load Core Modules
+-- Load core modules
 require("core.options")
 require("core.keymaps")
 require("core.terminal")
 
--- 4. Setup Lazy.nvim and load plugins
+-- Setup plugins
 require("lazy").setup({
   { import = "plugins" },
 }, {
@@ -45,3 +45,7 @@ require("lazy").setup({
     notify = false,
   },
 })
+
+-- FIXME: This rtp prepend might cause issues with other configs
+-- TODO: Add fallback for when lazy.nvim fails to install
+-- NOTE: Bootstrap process could be simplified maybe?

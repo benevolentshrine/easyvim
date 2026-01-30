@@ -1,0 +1,7 @@
+organization=benevolentshrine
+projectKey=benevolentshrine_easyvim
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.79246
+dashboardUrl=https://sonarcloud.io/dashboard?id=benevolentshrine_easyvim
+ceTaskId=AZwQo-yUJDKkY_PoYUuX
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZwQo-yUJDKkY_PoYUuX

@@ -59,7 +59,7 @@ map({ "n", "i" }, "<C-z>", function()
     vim.cmd("undo")
 end, { desc = "Undo" })
 
--- Copy shortcut
+-- Copy shortcut (works in visual mode for selections like Ctrl+A)
 map("v", "<C-c>", '"+y', { desc = "Copy" })
 
 -- Paste shortcut
@@ -105,11 +105,24 @@ map("n", "<BS>", "i<BS><Esc>l", { desc = "Backspace" })
 -- Enter in Normal Mode (behaves like an editor)
 map("n", "<CR>", "i<CR><Esc>", { desc = "Enter Key" })
 
--- Select All (Ctrl+A)
+-- Select All (Ctrl+A) - enters visual mode to select, that's fine
 map({ "n", "i", "v" }, "<C-a>", "<Esc>ggVG", { desc = "Select All" })
 
 -- Backspace in Visual Mode (Deletes selection)
 map("v", "<BS>", '"_d', { desc = "Delete Selection" })
+
+-- =====================================================
+-- VISUAL MODE ENTRY DISABLED (v and V keys only)
+-- EasyVim disables manual visual mode entry via v/V keys
+-- But Ctrl+A select-all still works (it uses visual mode internally)
+-- =====================================================
+map("n", "v", "<Nop>", { desc = "Visual mode disabled" })
+map("n", "V", "<Nop>", { desc = "Visual line mode disabled" })
+map("n", "gv", "<Nop>", { desc = "Reselect disabled" })
+
+-- If somehow in visual mode via v/V keys, escape (but allow Ctrl+A selection)
+map("v", "v", "<Esc>", { silent = true })
+map("v", "V", "<Esc>", { silent = true })
 
 -- Some extra handy shortcuts I've been wanting
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Quick save" })
