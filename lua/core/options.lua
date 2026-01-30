@@ -59,7 +59,6 @@ opt.titlestring = "%t - EasyVim"
 -- Makes EasyVim feel like a normal editor, not a modal one
 vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
     callback = function()
-        -- Only enter insert mode for real file buffers
         local bt = vim.bo.buftype
         local ft = vim.bo.filetype
         
@@ -73,13 +72,14 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
             if ft == skip or bt == skip then return end
         end
         
-        -- Only for normal file buffers
-        if bt == "" and ft ~= "" then
-            vim.schedule(function()
-                if vim.fn.mode() == "n" then
+        -- For normal file buffers (including new empty files with no filetype yet)
+        if bt == "" then
+            -- Use defer_fn with 0 delay for immediate but safe execution
+            vim.defer_fn(function()
+                if vim.fn.mode() == "n" and vim.bo.buftype == "" then
                     vim.cmd("startinsert")
                 end
-            end)
+            end, 1)  -- 1ms delay, practically instant
         end
     end
 })
