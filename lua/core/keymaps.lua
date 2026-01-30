@@ -113,11 +113,15 @@ map("v", "<BS>", '"_d', { desc = "Delete Selection" })
 
 -- =====================================================
 -- MOUSE VISUAL MODE DISABLED
--- EasyVim disables mouse-drag visual selection (annoying for non-vim users)
+-- Double-click/triple-click normally enters visual mode - disabled here
 -- Keyboard v/V keys still work for power users who need them
 -- =====================================================
-map("n", "<LeftDrag>", "<Nop>", { desc = "Disable mouse drag selection" })
-map("n", "<LeftRelease>", "<LeftRelease>", { desc = "Keep click positioning" })
+map("n", "<2-LeftMouse>", "<LeftMouse>", { desc = "Double-click = single click" })
+map("n", "<3-LeftMouse>", "<LeftMouse>", { desc = "Triple-click = single click" })
+map("n", "<4-LeftMouse>", "<LeftMouse>", { desc = "Quad-click = single click" })
+map("i", "<2-LeftMouse>", "<LeftMouse>", { desc = "Double-click = single click" })
+map("i", "<3-LeftMouse>", "<LeftMouse>", { desc = "Triple-click = single click" })
+map("i", "<4-LeftMouse>", "<LeftMouse>", { desc = "Quad-click = single click" })
 map("v", "<LeftDrag>", "<Esc>", { desc = "Exit visual on mouse drag" })
 map("v", "<LeftRelease>", "<Esc>", { desc = "Exit visual on mouse release" })
 
