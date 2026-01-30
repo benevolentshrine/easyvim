@@ -97,19 +97,35 @@ return {
                 callback = function()
                     if vim.bo.filetype == "neo-tree" then
                         set_hidden_cursor()
-                        -- Disable Visual Mode in Sidebar (User Request: "remove v-block fuss")
-                        vim.keymap.set("n", "v", "<Nop>", { buffer = true })
-                        vim.keymap.set("n", "V", "<Nop>", { buffer = true })
-                        vim.keymap.set("n", "<C-v>", "<Nop>", { buffer = true })
-                        -- Safety: If they somehow get into visual mode (mouse), exit immediately on keys
-                        vim.keymap.set("v", "v", "<Esc>", { buffer = true })
-                        vim.keymap.set("v", "V", "<Esc>", { buffer = true })
-                        vim.keymap.set("v", "<C-v>", "<Esc>", { buffer = true })
-                        -- Mouse drag fix
-                        vim.keymap.set("v", "<LeftRelease>", "<Esc>", { buffer = true })
+                        -- Disable ALL Visual Mode entry in Sidebar
+                        vim.keymap.set("n", "v", "<Nop>", { buffer = true, silent = true })
+                        vim.keymap.set("n", "V", "<Nop>", { buffer = true, silent = true })
+                        vim.keymap.set("n", "<C-v>", "<Nop>", { buffer = true, silent = true })
+                        vim.keymap.set("n", "gv", "<Nop>", { buffer = true, silent = true })
+                        -- If somehow in visual mode, escape immediately
+                        vim.keymap.set("v", "<Esc>", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set("v", "v", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set("v", "V", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set("v", "<C-v>", "<Esc>", { buffer = true, silent = true })
+                        -- Mouse selection prevention
+                        vim.keymap.set("v", "<LeftRelease>", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set("v", "<LeftDrag>", "<Esc>", { buffer = true, silent = true })
                     else
                         -- Restore to Line Cursor everywhere
                         vim.cmd("set guicursor=a:ver25")
+                    end
+                end,
+            })
+            
+            -- Force exit visual mode in neo-tree if somehow entered
+            vim.api.nvim_create_autocmd("ModeChanged", {
+                pattern = "*:[vV\x16]*",  -- Any mode to visual/vline/vblock
+                callback = function()
+                    if vim.bo.filetype == "neo-tree" then
+                        vim.schedule(function()
+                            vim.cmd("stopinsert")
+                            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+                        end)
                     end
                 end,
             })
@@ -173,40 +189,17 @@ return {
                 local file = vim.fn.expand("%:p")
                 
                 if file == "" or vim.bo.buftype ~= "" then
-                    vim.notify("Open a file first!", vim.log.levels.WARN)
+                    vim.notify("Need to open a file first!", vim.log.levels.WARN)
                     return
                 end
 
-                local run_commands = {
-                    javascript = "node",
-                    typescript = "deno run",
-                    lua = "lua",
-                    go = "go run",
-                    php = "php",
-                    ruby = "ruby",
-                    dart = "dart run",
-                    java = "java",
-                }
+                -- Get commands from shared module to avoid duplication
+                local run_commands = require("core.runners").get_commands()
 
-                if vim.fn.has("win32") == 1 then
-                    -- Windows
-                    run_commands.python = "python " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
-                    run_commands.rust = "rustc %s -o main.exe && .\\main.exe"
-                    run_commands.c = "gcc %s -o main.exe && .\\main.exe"
-                    run_commands.cpp = "g++ %s -o main.exe && .\\main.exe"
-                    run_commands.html = "explorer"
-                else
-                    -- Linux / MacOS
-                    run_commands.python = "python3 " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
-                    run_commands.rust = "rustc %s -o /tmp/rustout && /tmp/rustout"
-                    run_commands.c = "gcc %s -o /tmp/cout && /tmp/cout"
-                    run_commands.cpp = "g++ %s -o /tmp/cppout && /tmp/cppout"
-                    run_commands.html = "xdg-open"
-                end
                 
                 local cmd = run_commands[ft]
                 if not cmd then
-                    vim.notify("No runner for: " .. ft, vim.log.levels.WARN)
+                    vim.notify("Not sure how to run " .. ft .. " files", vim.log.levels.WARN)
                     return
                 end
 
@@ -246,45 +239,27 @@ return {
             local function act_open_folder()
                 local new_dir = ""
                 
-                -- OS-Specific GUI Pickers
-                if vim.fn.has("win32") == 1 then
-                    -- Windows (PowerShell)
-                    local cmd = "powershell -NoProfile -Command \"Add-Type -AssemblyName System.Windows.Forms; $d = New-Object System.Windows.Forms.FolderBrowserDialog; $d.ShowNewFolderButton = $true; if ($d.ShowDialog() -eq 'OK') { Write-Host $d.SelectedPath }\""
-                    local handle = io.popen(cmd)
+                -- Try zenity on Linux
+                if vim.fn.executable("zenity") == 1 then
+                    local handle = io.popen("zenity --file-selection --directory --title='Open Folder' 2>/dev/null")
                     if handle then
-                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
-                        handle:close()
-                    end
-                elseif vim.fn.has("mac") == 1 then
-                    -- MacOS (AppleScript)
-                    local handle = io.popen("osascript -e 'POSIX path of (choose folder)'")
-                    if handle then
-                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
-                        handle:close()
-                    end
-                elseif vim.fn.executable("zenity") == 1 then
-                    -- Linux (Zenity) - Silence GTK/Adwaita warnings
-                    local handle = io.popen("zenity --file-selection --directory 2>/dev/null")
-                    if handle then
-                        new_dir = handle:read("*a"):gsub("[\r\n]", "")
+                        new_dir = handle:read("*a"):gsub("%s+$", "") -- trim whitespace
                         handle:close()
                     end
                 end
 
-                -- Fallback to Text Input if GUI failed or cancelled
+                -- Fallback to text input if zenity not available or cancelled
                 if new_dir == "" then
-                    -- If user cancelled GUI, do nothing. If GUI failed, ask via text.
-                    -- Simple heuristic: if GUI tools missing, fallback.
-                    if vim.fn.has("win32") == 0 and vim.fn.has("mac") == 0 and vim.fn.executable("zenity") == 0 then
-                         local current = vim.fn.getcwd()
-                         new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
-                    end
+                    local current = vim.fn.getcwd()
+                    new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
                 end
 
-                if new_dir ~= "" then
-                    vim.cmd("cd " .. new_dir)
+                if new_dir ~= "" and vim.fn.isdirectory(new_dir) == 1 then
+                    vim.cmd("cd " .. vim.fn.fnameescape(new_dir))
                     vim.cmd("Neotree show")
                     vim.notify("Workspace: " .. new_dir)
+                elseif new_dir ~= "" then
+                    vim.notify("Not a valid directory: " .. new_dir, vim.log.levels.ERROR)
                 end
             end
 

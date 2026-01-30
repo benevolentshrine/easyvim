@@ -3,7 +3,8 @@
 
 local map = vim.keymap.set
 
--- Run commands for each filetype
+-- Commands for running different file types
+-- Load runners from shared config to avoid duplication
 local run_commands = {
     javascript = "node",
     typescript = "deno run",
@@ -15,35 +16,20 @@ local run_commands = {
     java = "java",
 }
 
-if vim.fn.has("win32") == 1 then
-    -- Windows
-    run_commands.python = "python " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
-    run_commands.rust = "rustc %s -o main.exe && .\\main.exe"
-    run_commands.c = "gcc %s -o main.exe && .\\main.exe"
-    run_commands.cpp = "g++ %s -o main.exe && .\\main.exe"
-    run_commands.html = "explorer"
-else
-    -- Linux / MacOS
-    run_commands.python = "python3 " .. vim.fn.stdpath("config") .. "/lua/core/pyrunner.py"
-    run_commands.rust = "rustc %s -o /tmp/rustout && /tmp/rustout"
-    run_commands.c = "gcc %s -o /tmp/cout && /tmp/cout"
-    run_commands.cpp = "g++ %s -o /tmp/cppout && /tmp/cppout"
-    run_commands.html = "xdg-open"
-end
 
--- Simple Run Code function
+-- Quick function to run current file
 local function run_code()
     local ft = vim.bo.filetype
     local file = vim.fn.expand("%:p")
     
     if file == "" or vim.bo.buftype ~= "" then
-        vim.notify("Open a file first!", vim.log.levels.WARN)
+        vim.notify("Hey! Open a file first before running this", vim.log.levels.WARN)
         return
     end
     
     local cmd = run_commands[ft]
     if not cmd then
-        vim.notify("No runner for: " .. ft, vim.log.levels.WARN)
+        vim.notify("Hmm, don't know how to run " .. ft .. " files yet", vim.log.levels.WARN)
         return
     end
     
@@ -61,49 +47,49 @@ local function run_code()
     EasyTerminal.run(full_cmd)
 end
 
--- 1. Ctrl+S: Save
+-- Save shortcut
 map({ "n", "i", "v" }, "<C-s>", function()
     if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
     if vim.bo.buftype == "" then vim.cmd("write") end
 end, { desc = "Save" })
 
--- 2. Ctrl+Z: Undo
+-- Undo shortcut
 map({ "n", "i" }, "<C-z>", function()
     if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
     vim.cmd("undo")
 end, { desc = "Undo" })
 
--- 3. Ctrl+C: Copy
+-- Copy shortcut
 map("v", "<C-c>", '"+y', { desc = "Copy" })
 
--- 4. Ctrl+V: Paste
+-- Paste shortcut
 map({ "n", "i" }, "<C-v>", '"+p', { desc = "Paste" })
--- Paste in Terminal Mode (Needs specific escape sequence)
+-- Terminal paste needs special handling
 map("t", "<C-v>", '<C-\\><C-N>"+pi', { desc = "Paste" })
 
--- 5. Ctrl+F: Find Files
+-- File search
 map({ "n", "i" }, "<C-f>", function()
     if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
     require("telescope.builtin").find_files()
 end, { desc = "Find Files" })
 
--- 6. Ctrl+H: Search in Files
+-- Text search
 map({ "n", "i" }, "<C-h>", function()
     if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
     require("telescope.builtin").live_grep()
 end, { desc = "Search in Files" })
 
--- 7. Ctrl+B: Toggle Sidebar
+-- Toggle sidebar
 map({ "n", "i", "v" }, "<C-b>", "<cmd>Neotree toggle<cr>", { desc = "Toggle Sidebar" })
 
 -- 8. Ctrl+/: Toggle Comment (handled by Comment.nvim)
 
--- 9. Ctrl+\: Toggle Terminal
+-- Terminal toggle
 map({ "n", "i", "t" }, "<C-\\>", function()
     EasyTerminal.toggle()
 end, { desc = "Toggle Terminal" })
 
--- 10. F5: Run Code
+-- Run current file
 map("n", "<F5>", run_code, { desc = "Run Code" })
 
 -- Tab navigation
@@ -124,3 +110,12 @@ map({ "n", "i", "v" }, "<C-a>", "<Esc>ggVG", { desc = "Select All" })
 
 -- Backspace in Visual Mode (Deletes selection)
 map("v", "<BS>", '"_d', { desc = "Delete Selection" })
+
+-- Some extra handy shortcuts I've been wanting
+map("n", "<leader>w", "<cmd>w<CR>", { desc = "Quick save" })
+map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quick quit" })
+map("n", "<leader>so", "<cmd>source %<CR>", { desc = "Source current file" })
+
+-- Sometimes I accidentally hit these, so disable them
+map("", "<F1>", "<Nop>", { desc = "Disable help" })
+map("i", "<F1>", "<Nop>", { desc = "Disable help in insert" })

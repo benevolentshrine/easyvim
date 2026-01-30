@@ -1,19 +1,19 @@
 -- lua/core/options.lua
 -- EasyVim Editor Settings
 
-local opt = vim.opt
+local opt=vim.opt
 
 -- Mouse: Enable globally
-opt.mouse = 'a'
+opt.mouse="a"
 
 -- Clipboard: Sync with system
-opt.clipboard = 'unnamedplus'
+opt.clipboard='unnamedplus'
 
 -- Cursor Style: Line everywhere (VS Code style), no Block
 opt.guicursor = "a:ver25"
 
 -- Editor Defaults
-opt.number = true
+opt.number=true
 opt.relativenumber = false
 opt.tabstop = 4
 opt.shiftwidth = 4
@@ -41,3 +41,45 @@ opt.cmdheight = 0             -- Hide the command line when not typing
 opt.showmode = false          -- Hide "-- INSERT --" etc (Lualine handles it)
 
 
+
+-- TODO: Consider making some of these configurable
+-- NOTE: Disabled swap files because they were annoying me personally
+--       Might want to make this optional in the future
+
+-- Personal preferences that might change
+opt.cursorline = true  -- I like seeing current line
+opt.foldmethod = "indent" -- Basic folding, might change later
+opt.foldlevelstart = 99  -- Start unfolded
+
+-- Might remove these later, testing for now
+opt.title = true
+opt.titlestring = "%t - EasyVim"
+
+-- Auto Insert Mode: Always start in insert mode for real files
+-- Makes EasyVim feel like a normal editor, not a modal one
+vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+    callback = function()
+        -- Only enter insert mode for real file buffers
+        local bt = vim.bo.buftype
+        local ft = vim.bo.filetype
+        
+        -- Skip special buffers (sidebars, terminals, popups, etc.)
+        local skip_types = {
+            "neo-tree", "alpha", "TelescopePrompt", "lazy", "mason", 
+            "help", "qf", "terminal", "nofile", "prompt"
+        }
+        
+        for _, skip in ipairs(skip_types) do
+            if ft == skip or bt == skip then return end
+        end
+        
+        -- Only for normal file buffers
+        if bt == "" and ft ~= "" then
+            vim.schedule(function()
+                if vim.fn.mode() == "n" then
+                    vim.cmd("startinsert")
+                end
+            end)
+        end
+    end
+})
