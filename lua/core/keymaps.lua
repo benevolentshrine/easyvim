@@ -112,17 +112,14 @@ map({ "n", "i", "v" }, "<C-a>", "<Esc>ggVG", { desc = "Select All" })
 map("v", "<BS>", '"_d', { desc = "Delete Selection" })
 
 -- =====================================================
--- VISUAL MODE ENTRY DISABLED (v and V keys only)
--- EasyVim disables manual visual mode entry via v/V keys
--- But Ctrl+A select-all still works (it uses visual mode internally)
+-- MOUSE VISUAL MODE DISABLED
+-- EasyVim disables mouse-drag visual selection (annoying for non-vim users)
+-- Keyboard v/V keys still work for power users who need them
 -- =====================================================
-map("n", "v", "<Nop>", { desc = "Visual mode disabled" })
-map("n", "V", "<Nop>", { desc = "Visual line mode disabled" })
-map("n", "gv", "<Nop>", { desc = "Reselect disabled" })
-
--- If somehow in visual mode via v/V keys, escape (but allow Ctrl+A selection)
-map("v", "v", "<Esc>", { silent = true })
-map("v", "V", "<Esc>", { silent = true })
+map("n", "<LeftDrag>", "<Nop>", { desc = "Disable mouse drag selection" })
+map("n", "<LeftRelease>", "<LeftRelease>", { desc = "Keep click positioning" })
+map("v", "<LeftDrag>", "<Esc>", { desc = "Exit visual on mouse drag" })
+map("v", "<LeftRelease>", "<Esc>", { desc = "Exit visual on mouse release" })
 
 -- Some extra handy shortcuts I've been wanting
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Quick save" })
