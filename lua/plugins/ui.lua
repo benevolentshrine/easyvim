@@ -50,15 +50,16 @@ return {
             window = {
                 width = 30,
                 mappings = {
-                    ["<CR>"] = "open",           -- Enter opens file
-                    ["o"] = "open",              -- o opens file
-                    ["<2-LeftMouse>"] = "open",  -- Double-click opens (single click just selects)
-                    ["a"] = "add",               -- Prompts for name
+                    ["<CR>"] = "open",              -- Enter opens file
+                    ["o"] = "open",                 -- o opens file
+                    ["<LeftRelease>"] = "open",     -- Single-click opens file
+                    ["<2-LeftMouse>"] = "open",     -- Double-click also opens
+                    ["a"] = "add",                  -- Prompts for name
                     ["d"] = "delete",
                     ["r"] = "rename",
                     ["c"] = "copy",
                     ["m"] = "move",
-                    ["<"] = "prev_source",       -- Navigate sources
+                    ["<"] = "prev_source",
                     [">"] = "next_source",
                 },
             },
