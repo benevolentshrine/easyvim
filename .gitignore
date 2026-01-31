@@ -7,3 +7,17 @@
 
 # Neovim
 lazy-lock.json
+
+# Project Documentation (internal only)
+*.backup
+.scannerwork/
+assets/
+generate_graph.py
+FINANCIAL_VIABILITY.md
+MVP_DEFINITION.md
+OPERATIONAL_VIABILITY.md
+PROBLEM_SOLUTION_ANALYSIS.md
+PROJECT_SCOPE.md
+RISK_ASSESSMENT.md
+SYSTEM_ARCHITECTURE.md
+TECHNICAL_FEASIBILITY.md
