@@ -61,25 +61,36 @@ vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
     callback = function()
         local bt = vim.bo.buftype
         local ft = vim.bo.filetype
+        local bufname = vim.fn.bufname()
         
         -- Skip special buffers (sidebars, terminals, popups, etc.)
         local skip_types = {
             "neo-tree", "alpha", "TelescopePrompt", "lazy", "mason", 
-            "help", "qf", "terminal", "nofile", "prompt"
+            "help", "qf", "terminal", "nofile", "prompt", "NvimTree"
         }
         
         for _, skip in ipairs(skip_types) do
             if ft == skip or bt == skip then return end
         end
         
+        -- Also skip if buffer name contains neo-tree
+        if bufname:match("neo%-tree") or bufname:match("NvimTree") then
+            return
+        end
+        
+        -- Skip non-modifiable buffers
+        if not vim.bo.modifiable then
+            return
+        end
+        
         -- For normal file buffers (including new empty files with no filetype yet)
         if bt == "" then
-            -- Use defer_fn with 0 delay for immediate but safe execution
             vim.defer_fn(function()
-                if vim.fn.mode() == "n" and vim.bo.buftype == "" then
+                -- Double-check we're still in a valid buffer
+                if vim.fn.mode() == "n" and vim.bo.buftype == "" and vim.bo.modifiable then
                     vim.cmd("startinsert")
                 end
-            end, 1)  -- 1ms delay, practically instant
+            end, 1)
         end
     end
 })

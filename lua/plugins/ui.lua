@@ -51,10 +51,9 @@ return {
                 width = 30,
                 mappings = {
                     ["<CR>"] = "open",              -- Enter opens file
-                    ["o"] = "open",                 -- o opens file
-                    ["<LeftRelease>"] = "open",     -- Single-click opens file
-                    ["<2-LeftMouse>"] = "open",     -- Double-click also opens
-                    ["a"] = "add",                  -- Prompts for name
+                    ["o"] = "open",                 -- o opens file  
+                    ["<2-LeftMouse>"] = "open",     -- Double-click opens
+                    ["a"] = "add",                  -- Add file/folder
                     ["d"] = "delete",
                     ["r"] = "rename",
                     ["c"] = "copy",
