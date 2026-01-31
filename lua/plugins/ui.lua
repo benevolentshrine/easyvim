@@ -2,33 +2,36 @@
 -- EasyVim UI Configuration
 
 return {
-    -- 1. Color Schemes (Dark + Light options)
+    -- 1. Color Schemes (5 Diverse Minimal Themes)
     {
-        "folke/tokyonight.nvim",
+        "rose-pine/neovim",
+        name = "rose-pine",
         lazy = false,
         priority = 1000,
         config = function()
+            require("rose-pine").setup({ styles = { italic = false } })
             local data_path = vim.fn.stdpath("data") .. "/theme.txt"
             if vim.fn.filereadable(data_path) == 1 then
                 local saved_theme = vim.fn.readfile(data_path)[1]
-                if saved_theme == "Tokyo Night" then vim.cmd("colorscheme tokyonight-storm")
-                elseif saved_theme == "Midnight (Black)" then vim.cmd("colorscheme tokyonight-night")
-                elseif saved_theme == "Catppuccin (Mocha)" then vim.cmd("colorscheme catppuccin-mocha")
-                elseif saved_theme == "Kanagawa (Zen)" then vim.cmd("colorscheme kanagawa")
-                elseif saved_theme == "Gruvbox" then 
-                     vim.o.background = "dark"
-                     vim.cmd("colorscheme gruvbox")
+                if saved_theme == "Rose Pine" then vim.cmd("colorscheme rose-pine")
+                elseif saved_theme == "Nord" then vim.cmd("colorscheme nord")
+                elseif saved_theme == "Everforest" then 
+                    vim.o.background = "dark"
+                    vim.cmd("colorscheme everforest")
+                elseif saved_theme == "One Dark" then vim.cmd("colorscheme onedark")
+                elseif saved_theme == "Nightfox" then vim.cmd("colorscheme nightfox")
                 else
-                     vim.cmd("colorscheme tokyonight-storm") 
+                    vim.cmd("colorscheme rose-pine") 
                 end
             else
-                vim.cmd.colorscheme("tokyonight-storm")
+                vim.cmd.colorscheme("rose-pine")
             end
         end,
     },
-    { "ellisonleao/gruvbox.nvim", lazy = true },
-    { "catppuccin/nvim", name = "catppuccin", lazy = true },
-    { "rebelot/kanagawa.nvim", lazy = true },
+    { "shaunsingh/nord.nvim", lazy = true },
+    { "sainnhe/everforest", lazy = true },
+    { "navarasu/onedark.nvim", lazy = true },
+    { "EdenEast/nightfox.nvim", lazy = true },
 
     -- 2. File Explorer (Sidebar)
     {
@@ -268,22 +271,22 @@ return {
 
             local function act_theme() 
                 vim.ui.select(
-                    { "Tokyo Night", "Midnight (Black)", "Catppuccin (Mocha)", "Kanagawa (Zen)", "Gruvbox" },
+                    { "Rose Pine", "Nord", "Everforest", "One Dark", "Nightfox" },
                     { prompt = "Select Theme" },
                     function(choice)
                         if not choice then return end
                         
-                        if choice == "Tokyo Night" then 
-                            vim.cmd("colorscheme tokyonight-storm")
-                        elseif choice == "Midnight (Black)" then 
-                            vim.cmd("colorscheme tokyonight-night")
-                        elseif choice == "Catppuccin (Mocha)" then 
-                            vim.cmd("colorscheme catppuccin-mocha")
-                        elseif choice == "Kanagawa (Zen)" then 
-                            vim.cmd("colorscheme kanagawa")
-                        elseif choice == "Gruvbox" then 
+                        if choice == "Rose Pine" then 
+                            vim.cmd("colorscheme rose-pine")
+                        elseif choice == "Nord" then 
+                            vim.cmd("colorscheme nord")
+                        elseif choice == "Everforest" then 
                             vim.o.background = "dark"
-                            vim.cmd("colorscheme gruvbox") 
+                            vim.cmd("colorscheme everforest")
+                        elseif choice == "One Dark" then 
+                            vim.cmd("colorscheme onedark")
+                        elseif choice == "Nightfox" then 
+                            vim.cmd("colorscheme nightfox") 
                         end
                         
                         -- Save choice for persistent load
