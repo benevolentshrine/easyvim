@@ -73,6 +73,7 @@ function M.show()
         "  F5       Run Code",
         "",
         "  -- Sidebar Keys --",
+        "  Enter    Open File",
         "  a        Add File/Folder",
         "  d        Delete",
         "  r        Rename",
