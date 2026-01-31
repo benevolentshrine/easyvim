@@ -191,8 +191,15 @@ return {
                 local ft = vim.bo.filetype
                 local file = vim.fn.expand("%:p")
                 
+                -- Check if on dashboard or special buffer
+                if ft == "alpha" or ft == "neo-tree" or ft == "TelescopePrompt" then
+                    vim.notify("Open a file first! Use Ctrl+F to find files.", vim.log.levels.WARN)
+                    return
+                end
+                
+                -- Check if no file is open
                 if file == "" or vim.bo.buftype ~= "" then
-                    vim.notify("Need to open a file first!", vim.log.levels.WARN)
+                    vim.notify("Open a code file first!", vim.log.levels.WARN)
                     return
                 end
 
@@ -202,7 +209,7 @@ return {
                 
                 local cmd = run_commands[ft]
                 if not cmd then
-                    vim.notify("Not sure how to run " .. ft .. " files", vim.log.levels.WARN)
+                    vim.notify("Don't know how to run ." .. (vim.fn.expand("%:e") or ft) .. " files", vim.log.levels.WARN)
                     return
                 end
 

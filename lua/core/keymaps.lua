@@ -112,7 +112,7 @@ map({ "n", "i", "v" }, "<C-a>", "<Esc>ggVG", { desc = "Select All" })
 map("v", "<BS>", '"_d', { desc = "Delete Selection" })
 
 -- =====================================================
--- MOUSE VISUAL MODE DISABLED
+-- MOUSE VISUAL MODE DISABLED (except in terminal)
 -- Double-click/triple-click normally enters visual mode - disabled here
 -- Keyboard v/V keys still work for power users who need them
 -- =====================================================
@@ -122,8 +122,7 @@ map("n", "<4-LeftMouse>", "<LeftMouse>", { desc = "Quad-click = single click" })
 map("i", "<2-LeftMouse>", "<LeftMouse>", { desc = "Double-click = single click" })
 map("i", "<3-LeftMouse>", "<LeftMouse>", { desc = "Triple-click = single click" })
 map("i", "<4-LeftMouse>", "<LeftMouse>", { desc = "Quad-click = single click" })
-map("v", "<LeftDrag>", "<Esc>", { desc = "Exit visual on mouse drag" })
-map("v", "<LeftRelease>", "<Esc>", { desc = "Exit visual on mouse release" })
+-- Note: Terminal mode (t) is NOT affected - mouse selection works there for copying output
 
 -- Some extra handy shortcuts I've been wanting
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Quick save" })
