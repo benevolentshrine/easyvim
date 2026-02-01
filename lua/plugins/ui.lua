@@ -48,7 +48,9 @@ return {
             close_if_last_window = true,
             enable_git_status = true,
             window = {
+                position = "left",
                 width = 30,
+                auto_expand_width = false,  -- Don't auto-expand
                 mappings = {
                     ["<CR>"] = "open",              -- Enter opens file
                     ["o"] = "open",                 -- o opens file  
@@ -105,19 +107,32 @@ return {
                 callback = function()
                     if vim.bo.filetype == "neo-tree" then
                         set_hidden_cursor()
+                        
+                        -- CRITICAL: Make sure we're in normal mode
+                        vim.cmd("stopinsert")
+                        
                         -- Disable ALL Visual Mode entry in Sidebar
                         vim.keymap.set("n", "v", "<Nop>", { buffer = true, silent = true })
                         vim.keymap.set("n", "V", "<Nop>", { buffer = true, silent = true })
                         vim.keymap.set("n", "<C-v>", "<Nop>", { buffer = true, silent = true })
                         vim.keymap.set("n", "gv", "<Nop>", { buffer = true, silent = true })
-                        -- If somehow in visual mode, escape immediately
+                        
+                        -- Disable insert mode triggers
+                        vim.keymap.set("n", "i", "<Nop>", { buffer = true, silent = true })
+                        vim.keymap.set("n", "I", "<Nop>", { buffer = true, silent = true })
+                        vim.keymap.set("n", "a", "add", { buffer = true, silent = true, remap = true })  -- 'a' is for add file
+                        vim.keymap.set("n", "A", "<Nop>", { buffer = true, silent = true })
+                        
+                        -- If somehow in visual/insert mode, escape immediately
                         vim.keymap.set("v", "<Esc>", "<Esc>", { buffer = true, silent = true })
                         vim.keymap.set("v", "v", "<Esc>", { buffer = true, silent = true })
                         vim.keymap.set("v", "V", "<Esc>", { buffer = true, silent = true })
                         vim.keymap.set("v", "<C-v>", "<Esc>", { buffer = true, silent = true })
-                        -- Mouse selection prevention
-                        vim.keymap.set("v", "<LeftRelease>", "<Esc>", { buffer = true, silent = true })
-                        vim.keymap.set("v", "<LeftDrag>", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set("i", "<Esc>", "<Esc>", { buffer = true, silent = true })
+                        
+                        -- Mouse events - just escape any mode
+                        vim.keymap.set({"n", "v", "i"}, "<LeftRelease>", "<Esc>", { buffer = true, silent = true })
+                        vim.keymap.set({"n", "v", "i"}, "<LeftDrag>", "<Nop>", { buffer = true, silent = true })
                     else
                         -- Restore to Line Cursor everywhere
                         vim.cmd("set guicursor=a:ver25")
@@ -125,15 +140,19 @@ return {
                 end,
             })
             
-            -- Force exit visual mode in neo-tree if somehow entered
+            -- Force exit insert/visual mode in neo-tree if somehow entered
             vim.api.nvim_create_autocmd("ModeChanged", {
-                pattern = "*:[vV\x16]*",  -- Any mode to visual/vline/vblock
+                pattern = "*",
                 callback = function()
                     if vim.bo.filetype == "neo-tree" then
-                        vim.schedule(function()
-                            vim.cmd("stopinsert")
-                            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-                        end)
+                        local mode = vim.fn.mode()
+                        -- If we're in insert or visual mode, escape immediately
+                        if mode == "i" or mode == "v" or mode == "V" or mode == "\22" then
+                            vim.schedule(function()
+                                vim.cmd("stopinsert")
+                                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+                            end)
+                        end
                     end
                 end,
             })

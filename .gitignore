@@ -11,7 +11,6 @@ lazy-lock.json
 # Project Documentation (internal only)
 *.backup
 .scannerwork/
-assets/
 generate_graph.py
 FINANCIAL_VIABILITY.md
 MVP_DEFINITION.md

@@ -2,108 +2,76 @@
 
 > **A lightweight, modern IDE experience built on Neovim where common shortcuts just work.**
 
-EasyVim bridges the gap between the intuition of VS Code and the raw performance of the terminal. It runs on **<35MB of RAM** but behaves like a modern editor out of the box.
+EasyVim bridges the gap between the intuition of VS Code and the raw performance of the terminal.
+
+![EasyVim](assets/Main.png)
 
 ---
 
 ## Highlights
 
-*   **Zero Learning Curve**: `Ctrl+S`, `Ctrl+C`, `Ctrl+V`, `Ctrl+Z` work instantly. No need to relearn muscle memory.
-*   **Blazing Fast**: Startup time **<50ms**. Input latency is instant.
-*   **Efficient**: Runs perfectly on old laptops, Raspberry Pis, or cloud shells (~25MB RAM).
-*   **Battery Included**: Comes with a File Explorer (Neo-tree), Terminal Toggles, and Auto-Language Support.
-
----
-
-## Performance Specs
-
-| Metric | EasyVim (Measured) |
-| :--- | :--- |
-| **Idle RAM** | **~25 MB** |
-| **Startup Time** | **< 50ms** |
-| **Philosophy** | **"Teach the Engine"** |
+- **Zero Learning Curve**: `Ctrl+S`, `Ctrl+C`, `Ctrl+V`, `Ctrl+Z` work instantly
+- **Blazing Fast**: Startup in under 50ms, runs on ~25MB RAM
+- **Battery Included**: File Explorer, Terminal, Themes, and Auto-Language Support
 
 ---
 
 ## Quick Start
 
-**Install in 3 steps:**
-
-### Linux / MacOS
 ```bash
 git clone https://github.com/benevolentshrine/easyvim.git
 cd easyvim
 ./install.sh
 ```
 
-
-
-*(Restart your terminal or run `nvim` to start)*
+*Restart your terminal and run `nvim` to start*
 
 ---
 
-## Usage & Shortcuts
-
-We map the keys you already know to Neovim's powerful backend.
+## Shortcuts
 
 | Key | Action |
 | :--- | :--- |
 | **Ctrl+S** | Save File |
-| **Ctrl+O** | **Open Folder** |
+| **Ctrl+O** | Open Folder |
 | **Ctrl+C** | Copy / Stop Code |
 | **Ctrl+V** | Paste |
 | **Ctrl+Z** | Undo |
 | **Ctrl+F** | Find File |
 | **Ctrl+H** | Search Text |
 | **Ctrl+B** | Toggle Sidebar |
-| **Ctrl+\** | Toggle Terminal |
-| **F5** | Run Code (Python, JS, C++, etc.) |
+| **Ctrl+\\** | Toggle Terminal |
+| **F5** | Run Code |
 
-*Click the **Shots** button in the top bar to see this list inside the editor.*
-
----
-
-## The Manual
-
-### Files & Sidebar
-Press **Ctrl+B** to open the file explorer (Neo-tree).
-- **a**: Add a file/folder
-- **d**: Delete
-- **r**: Rename
-- **c**: Copy
-- **m**: Move
-
-### Running Code
-EasyVim detects your language automatically.
-- Open a Python/JS/C++ file.
-- Press **F5**.
-- It runs inside the native terminal.
-- Press **Ctrl+\** to toggle the terminal manually.
-
-### Aesthetics & Customization
-EasyVim prioritizes visual comfort.
-- **Theme Switcher**: Click "Theme" in the top bar to swap between **Tokyo Night**, **Catppuccin**, **Kanagawa**, and more. It remembers your choice!
-- **native-gui**: Press **Ctrl+O** to use your OS's native folder picker (Windows/Mac/Linux) instead of the command line.
+![Shortcuts](assets/features/shortcuts.png)
 
 ---
 
-## Screenshots
+## Features
 
-<!-- Upload screenshots to 'assets/' folder and uncomment these lines -->
-<!-- 
-![Dashboard](assets/dashboard.png)
-![Sidebar](assets/sidebar.png)
--->
+### File Explorer
+Press **Ctrl+B** to toggle. Use **a** (add), **d** (delete), **r** (rename), **c** (copy), **m** (move).
+
+![File Explorer](assets/features/neotree.png)
+
+### Integrated Terminal
+Press **Ctrl+\\** to toggle. Press **F5** to run your code.
+
+![Terminal](assets/features/terminal.png)
 
 ---
 
-## Philosophy
+## Themes
 
-### 1. The Hardware Crisis
-Modern editors often consume gigabytes of RAM. EasyVim restores the **efficiency of the 90s** with the **UX of 2025**. It allows you to run a full development environment on any hardware without stutter.
+Switch themes with the **Theme** button in the top bar.
 
-### 2. The "Silent Teacher"
-Vim is infamous for "trapping" users. EasyVim removes this fear. We don't force you to learn modal editing immediately. Use the mouse, use the arrows. But when you are ready, the native power of Vim is lurking just beneath the surface.
+| Rose Pine | Nord | Everforest |
+|:-:|:-:|:-:|
+| ![Rose Pine](assets/themes/rosepine.png) | ![Nord](assets/themes/nord.png) | ![Everforest](assets/themes/everforest.png) |
+
+| One Dark | Nightfox |
+|:-:|:-:|
+| ![One Dark](assets/themes/onedark.png) | ![Nightfox](assets/themes/nightfox.png) |
 
 ---
 

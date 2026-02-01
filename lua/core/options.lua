@@ -3,8 +3,9 @@
 
 local opt=vim.opt
 
--- Mouse: Enable globally
-opt.mouse="a"
+-- Mouse: Enable globally (but not window resizing)
+opt.mouse = "a"
+opt.mousemoveevent = false  -- Disable mouse move events (prevents drag resize)
 
 -- Clipboard: Sync with system
 opt.clipboard='unnamedplus'
