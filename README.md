@@ -49,29 +49,29 @@ cd easyvim
 
 ## Features
 
-### File Explorer
-Press **Ctrl+B** to toggle. Use **a** (add), **d** (delete), **r** (rename), **c** (copy), **m** (move).
+### 🖥️ Native Workflow
+Forget the command line. Use your system's native **GUI File Picker** for Saving, Opening, and creating New files.
+*(Screenshot Placeholder: GUI File Picker)*
 
+### 🎨 Live Theme Preview
+Browse 5+ pro themes with **Instant Live Preview**. Just scroll to see the change.
+*(Screenshot Placeholder: Telescope Theme Picker)*
+
+### 🚀 Smart Dashboard
+Get to work immediately with a lightning-fast start screen.
+*(Screenshot Placeholder: Dashboard)*
+
+### 🖱️ Real Mouse Support
+Clickable Status Bar, Files, and Tabs. It behaves like a modern editor.
+*(Screenshot Placeholder: Clickable Status Bar)*
+
+### 📂 File Explorer
+Press **Ctrl+B** to toggle. Full mouse support included.
 ![File Explorer](assets/features/neotree.png)
 
-### Integrated Terminal
-Press **Ctrl+\\** to toggle. Press **F5** to run your code.
-
+### 💻 Integrated Terminal
+Press **Ctrl+\\** to toggle.
 ![Terminal](assets/features/terminal.png)
-
----
-
-## Themes
-
-Switch themes with the **Theme** button in the top bar.
-
-| Rose Pine | Nord | Everforest |
-|:-:|:-:|:-:|
-| ![Rose Pine](assets/themes/rosepine.png) | ![Nord](assets/themes/nord.png) | ![Everforest](assets/themes/everforest.png) |
-
-| One Dark | Nightfox |
-|:-:|:-:|
-| ![One Dark](assets/themes/onedark.png) | ![Nightfox](assets/themes/nightfox.png) |
 
 ---
 
