@@ -10,21 +10,27 @@ return {
         priority = 1000,
         config = function()
             require("rose-pine").setup({ styles = { italic = false } })
+            
+            -- Persistent Theme Loader
             local data_path = vim.fn.stdpath("data") .. "/theme.txt"
             if vim.fn.filereadable(data_path) == 1 then
                 local saved_theme = vim.fn.readfile(data_path)[1]
-                if saved_theme == "Rose Pine" then vim.cmd("colorscheme rose-pine")
-                elseif saved_theme == "Nord" then vim.cmd("colorscheme nord")
-                elseif saved_theme == "Everforest" then 
-                    vim.o.background = "dark"
-                    vim.cmd("colorscheme everforest")
-                elseif saved_theme == "One Dark" then vim.cmd("colorscheme onedark")
-                elseif saved_theme == "Nightfox" then vim.cmd("colorscheme nightfox")
+                if saved_theme and saved_theme ~= "" then
+                    -- Special handling for Everforest dark mode
+                    if saved_theme == "everforest" then
+                        vim.o.background = "dark"
+                    end
+                    
+                    -- Try to load the saved theme, fallback to rose-pine if fails
+                    local ok = pcall(vim.cmd, "colorscheme " .. saved_theme)
+                    if not ok then
+                        vim.cmd("colorscheme rose-pine")
+                    end
                 else
-                    vim.cmd("colorscheme rose-pine") 
+                   vim.cmd("colorscheme rose-pine")
                 end
             else
-                vim.cmd.colorscheme("rose-pine")
+                vim.cmd("colorscheme rose-pine")
             end
         end,
     },
@@ -52,6 +58,13 @@ return {
                 width = 30,
                 auto_expand_width = false,  -- Don't auto-expand
                 mappings = {
+                    -- Navigation (Default vim keys j/k/arrows work automatically)
+                    ["h"] = "close_node",           -- Collapse folder
+                    ["l"] = "open",                 -- Expand folder / open file
+                    ["<Left>"] = "close_node",
+                    ["<Right>"] = "open",
+                    
+                    -- File operations
                     ["<CR>"] = "open",              -- Enter opens file
                     ["o"] = "open",                 -- o opens file  
                     ["<2-LeftMouse>"] = "open",     -- Double-click opens
@@ -62,6 +75,15 @@ return {
                     ["m"] = "move",
                     ["<"] = "prev_source",
                     [">"] = "next_source",
+                    
+                    -- Extra navigation
+                    ["P"] = "navigate_up",          -- Go to parent
+                    ["<BS>"] = "navigate_up",       -- Backspace = go up
+                    
+                    -- Global Search consistency
+                    ["<C-f>"] = function() require("telescope.builtin").find_files() end,
+                    ["<C-h>"] = function() require("telescope.builtin").live_grep() end,
+                    ["<C-o>"] = function() _G.EasyVim.open_folder() end,
                 },
             },
             filesystem = {
@@ -89,24 +111,26 @@ return {
                 end,
             })
             
-            -- Hide Cursor completely in Sidebar
-            local function set_hidden_cursor()
-                -- 1. definition of Invisible color (Match background)
+            -- Hide Cursor but SHOW current line highlight in Sidebar
+            local function set_sidebar_cursor()
+                -- 1. Hide the cursor itself (invisible)
                 vim.api.nvim_set_hl(0, "HiddenCursor", { fg = "bg", bg = "bg", blend = 100 })
-                -- 2. Set to tiny horizontal line (hor1) using that invisible color
                 vim.opt_local.guicursor = "a:hor1-HiddenCursor"
+                
+                -- 2. ENABLE cursorline so user can see which item they're on!
+                vim.opt_local.cursorline = true
             end
             
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "neo-tree",
-                callback = set_hidden_cursor,
+                callback = set_sidebar_cursor,
             })
             
             vim.api.nvim_create_autocmd("BufEnter", {
                 pattern = "*",
                 callback = function()
                     if vim.bo.filetype == "neo-tree" then
-                        set_hidden_cursor()
+                        set_sidebar_cursor()
                         
                         -- CRITICAL: Make sure we're in normal mode
                         vim.cmd("stopinsert")
@@ -251,80 +275,38 @@ return {
             end
 
             -- Actions
-            local function act_new()
-                require("core.input").ask("New File Name", "", function(name)
-                    vim.cmd("enew")
-                    vim.cmd("file " .. name)
-                end)
-            end
-            local function act_save() 
-                local current_file = vim.fn.expand("%")
-                if current_file == "" then
-                    act_saveas() -- If no name, treat as "Save As"
-                elseif vim.bo.buftype == "" then 
-                    vim.cmd("write") 
-                end 
-            end
-            local function act_saveas()
-                require("core.input").ask("Save As", "", function(name)
-                    vim.cmd("saveas " .. name)
-                end)
-            end
-            local function act_open_folder()
-                local new_dir = ""
-                
-                -- Try zenity on Linux
-                if vim.fn.executable("zenity") == 1 then
-                    local handle = io.popen("zenity --file-selection --directory --title='Open Folder' 2>/dev/null")
-                    if handle then
-                        new_dir = handle:read("*a"):gsub("%s+$", "") -- trim whitespace
-                        handle:close()
-                    end
-                end
-
-                -- Fallback to text input if zenity not available or cancelled
-                if new_dir == "" then
-                    local current = vim.fn.getcwd()
-                    new_dir = vim.fn.input("Open Folder: ", current .. "/", "dir")
-                end
-
-                if new_dir ~= "" and vim.fn.isdirectory(new_dir) == 1 then
-                    vim.cmd("cd " .. vim.fn.fnameescape(new_dir))
-                    vim.cmd("Neotree show")
-                    vim.notify("Workspace: " .. new_dir)
-                elseif new_dir ~= "" then
-                    vim.notify("Not a valid directory: " .. new_dir, vim.log.levels.ERROR)
-                end
-            end
+            -- act_new, act_save, act_saveas, act_open_folder removed
+            -- we now use global EasyVim functions defined in core/keymaps.lua
+            
+            -- act_open_folder removed; using global EasyVim.open_folder
 
             -- Global Keymap for Open Folder (Ctrl+O)
-            vim.keymap.set("n", "<C-o>", act_open_folder, { desc = "Open Folder" })
+            -- Handled in core/keymaps.lua now
 
-            local function act_theme() 
-                vim.ui.select(
-                    { "Rose Pine", "Nord", "Everforest", "One Dark", "Nightfox" },
-                    { prompt = "Select Theme" },
-                    function(choice)
-                        if not choice then return end
+            local function act_theme()
+                -- Use Telescope for a live preview of themes!
+                -- This allows user to see the theme applied as they scroll.
+                require("telescope.builtin").colorscheme({
+                    enable_preview = true,
+                    attach_mappings = function(prompt_bufnr, map)
+                        local actions = require("telescope.actions")
+                        local action_state = require("telescope.actions.state")
                         
-                        if choice == "Rose Pine" then 
-                            vim.cmd("colorscheme rose-pine")
-                        elseif choice == "Nord" then 
-                            vim.cmd("colorscheme nord")
-                        elseif choice == "Everforest" then 
-                            vim.o.background = "dark"
-                            vim.cmd("colorscheme everforest")
-                        elseif choice == "One Dark" then 
-                            vim.cmd("colorscheme onedark")
-                        elseif choice == "Nightfox" then 
-                            vim.cmd("colorscheme nightfox") 
-                        end
-                        
-                        -- Save choice for persistent load
-                        local data_path = vim.fn.stdpath("data")
-                        vim.fn.writefile({choice}, data_path .. "/theme.txt")
+                        -- On selection (Enter)
+                        actions.select_default:replace(function()
+                            actions.close(prompt_bufnr)
+                            local selection = action_state.get_selected_entry()
+                            local theme = selection.value
+                            
+                            -- Apply and Save
+                            vim.cmd("colorscheme " .. theme)
+                            
+                            local data_path = vim.fn.stdpath("data")
+                            vim.fn.writefile({theme}, data_path .. "/theme.txt")
+                        end)
+                        return true
                     end
-                )
+                })
             end
 
             require("lualine").setup({
@@ -340,10 +322,10 @@ return {
                     lualine_b = { 'branch', 'diff' },
                     lualine_c = {
                         'filename',
-                        { function() return "New" end, on_click = act_new, color = { fg = "#7aa2f7" } },
-                        { function() return "Open" end, on_click = act_open_folder, color = { fg = "#ff9e64" } }, -- NEW
+                        { function() return "New" end, on_click = EasyVim.new_file, color = { fg = "#7aa2f7" } },
+                        { function() return "Open" end, on_click = EasyVim.open_folder, color = { fg = "#ff9e64" } }, -- NEW
                         { function() return "Files" end, on_click = function() vim.cmd("Neotree toggle") end, color = { fg = "#e0af68" } },
-                        { function() return "Save" end, on_click = act_save, color = { fg = "#9ece6a" } },
+                        { function() return "Save" end, on_click = EasyVim.smart_save, color = { fg = "#9ece6a" } },
                    },
                     lualine_x = {
                         { function() return "Shots" end, on_click = function() require("core.shortcuts").show() end, color = { fg = "#ff9e64" } },

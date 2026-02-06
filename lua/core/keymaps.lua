@@ -48,10 +48,117 @@ local function run_code()
 end
 
 -- Save shortcut
+-- Global Actions Table (exposed for UI/Plugins)
+_G.EasyVim = _G.EasyVim or {}
+
+-- 1. Smart Save (Handles "Save As" for new files)
+function EasyVim.smart_save()
+    local current_file = vim.fn.expand("%:p")
+    
+    -- If file already exists and is a normal buffer, just save
+    if current_file ~= "" and vim.bo.buftype == "" then
+        vim.cmd("write")
+        return
+    end
+
+    -- 1. Try Zenity (Linux GUI)
+    if vim.fn.executable("zenity") == 1 then
+        local handle = io.popen("zenity --file-selection --save --confirm-overwrite --title='Save As' 2>/dev/null")
+        if handle then
+            local new_path = handle:read("*a"):gsub("%s+$", "") -- trim whitespace
+            handle:close()
+            
+            if new_path ~= "" then
+                vim.cmd("write " .. vim.fn.fnameescape(new_path))
+            end
+            -- If cancelled (empty string), do nothing and return.
+            return
+        end
+    end
+
+    -- 2. Fallback to Text Input (if Zenity is missing)
+    vim.ui.input({ prompt = "Save As: ", default = "./" }, function(input)
+        if input and input ~= "" then
+            vim.cmd("write " .. input)
+        end
+    end)
+end
+
+-- 2. New File (Handles "Creates New File" via GUI)
+function EasyVim.new_file()
+    -- 1. Try Zenity (Linux GUI)
+    if vim.fn.executable("zenity") == 1 then
+        local handle = io.popen("zenity --file-selection --save --confirm-overwrite --title='Create New File' 2>/dev/null")
+        if handle then
+            local new_path = handle:read("*a"):gsub("%s+$", "") -- trim whitespace
+            handle:close()
+            
+            if new_path ~= "" then
+                vim.cmd("edit " .. vim.fn.fnameescape(new_path))
+                vim.cmd("write") -- Create the file on disk immediately
+            end
+            -- If cancelled, do nothing
+            return
+        end
+    end
+
+    -- 2. Fallback to Text Input
+    vim.ui.input({ prompt = "New File Name: ", default = "./" }, function(input)
+        if input and input ~= "" then
+            vim.cmd("edit " .. input)
+            vim.cmd("write") -- Create immediately
+        end
+    end)
+end
+
+-- 3. Open Folder (Handles UI vs Text Input)
+function EasyVim.open_folder()
+    -- Check if Zenity is available (Linux GUI)
+    if vim.fn.executable("zenity") == 1 then
+        local handle = io.popen("zenity --file-selection --directory --title='Open Folder' 2>/dev/null")
+        if handle then
+            local new_dir = handle:read("*a"):gsub("%s+$", "") -- trim whitespace
+            handle:close()
+            
+            -- If user selected a directory, navigate to it
+            if new_dir ~= "" and vim.fn.isdirectory(new_dir) == 1 then
+                vim.cmd("cd " .. vim.fn.fnameescape(new_dir))
+                vim.cmd("Neotree show")
+                vim.notify("Workspace: " .. new_dir)
+            end
+            -- If user cancelled (new_dir is empty), do NOTHING. 
+            -- Do not fallback to text input.
+            return
+        end
+    end
+
+    -- Fallback: Use Text Input ONLY if Zenity is not installed
+    vim.ui.input({ prompt = "Open Folder: ", default = vim.fn.getcwd() .. "/", completion = "dir" }, function(input)
+        if input and input ~= "" then
+            local new_dir = input
+            -- Execute change if input valid
+            if vim.fn.isdirectory(new_dir) == 1 then
+                vim.cmd("cd " .. vim.fn.fnameescape(new_dir))
+                vim.cmd("Neotree show")
+                vim.notify("Workspace: " .. new_dir)
+            else
+                vim.notify("Not a valid directory", vim.log.levels.ERROR)
+            end
+        end
+    end)
+end
+
+-- Save shortcut
 map({ "n", "i", "v" }, "<C-s>", function()
     if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
-    if vim.bo.buftype == "" then vim.cmd("write") end
-end, { desc = "Save" })
+    EasyVim.smart_save()
+end, { desc = "Save File" })
+
+-- Open Folder shortcut
+map({ "n", "i", "v" }, "<C-o>", function()
+    if vim.fn.mode() ~= "n" then vim.cmd("stopinsert") end
+    EasyVim.open_folder()
+end, { desc = "Open Folder" })
 
 -- Undo shortcut
 map({ "n", "i" }, "<C-z>", function()
@@ -96,6 +203,9 @@ map("n", "<F5>", run_code, { desc = "Run Code" })
 map("n", "<Tab>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next Tab" })
 map("n", "<S-Tab>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev Tab" })
 
+-- Exit (like VS Code Ctrl+Q)
+map({ "n", "i", "v" }, "<C-q>", "<cmd>qa<cr>", { desc = "Exit EasyVim" })
+
 -- Esc: Clear search
 map({ "n", "i" }, "<Esc>", "<cmd>nohlsearch<cr><Esc>", { desc = "Clear" })
 
@@ -124,11 +234,15 @@ map("i", "<3-LeftMouse>", "<LeftMouse>", { desc = "Triple-click = single click" 
 map("i", "<4-LeftMouse>", "<LeftMouse>", { desc = "Quad-click = single click" })
 -- Note: Terminal mode (t) is NOT affected - mouse selection works there for copying output
 
--- Some extra handy shortcuts I've been wanting
+-- F4: Exit (works reliably in SSH)
+map({ "n", "i", "v" }, "<F4>", "<cmd>qa<cr>", { desc = "Exit" })
+
+-- SSH-friendly exits using regular keys (these ALWAYS work)
+map("n", "ZZ", "<cmd>wqa<cr>", { desc = "Save all and exit" })  -- Classic vim
+map("n", "ZQ", "<cmd>qa!<cr>", { desc = "Force quit without saving" })
+map("n", "qq", "<cmd>qa<cr>", { desc = "Quick exit (double tap q)" })
+
+-- Leader shortcuts (Space + key)
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Quick save" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quick quit" })
 map("n", "<leader>so", "<cmd>source %<CR>", { desc = "Source current file" })
-
--- Sometimes I accidentally hit these, so disable them
-map("", "<F1>", "<Nop>", { desc = "Disable help" })
-map("i", "<F1>", "<Nop>", { desc = "Disable help in insert" })
