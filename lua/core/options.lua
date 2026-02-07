@@ -48,7 +48,7 @@ opt.showmode = false          -- Hide "-- INSERT --" etc (Lualine handles it)
 --       Might want to make this optional in the future
 
 -- Personal preferences that might change
-opt.cursorline = true  -- I like seeing current line
+opt.cursorline = false  -- Disabled: was causing red line in Neo-tree sidebar
 opt.foldmethod = "indent" -- Basic folding, might change later
 opt.foldlevelstart = 99  -- Start unfolded
 

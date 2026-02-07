@@ -60,6 +60,7 @@ function M.show()
     -- Set content
     local lines = {
         "",
+        "  Ctrl+N   New File",
         "  Ctrl+S   Save File",
         "  Ctrl+O   Open Folder",
         "  Ctrl+Z   Undo",
@@ -80,12 +81,6 @@ function M.show()
         "  l / →    Expand / Open",
         "  h / ←    Collapse",
         "  Enter    Open File",
-        "",
-        "  -- Sidebar Actions --",
-        "  a        Add File/Folder",
-        "  d        Delete",
-        "  r        Rename",
-        "  c / m    Copy / Move",
         "",
         "  [Esc or q] to Close",
     }
